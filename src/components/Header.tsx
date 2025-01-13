@@ -1,9 +1,9 @@
+import { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { Menu, X, Plus, LogOut, LogIn, UserPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Building2, LogIn, Menu, UserPlus, LogOut, Plus } from "lucide-react";
-import { useState } from "react";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { useNavigate, Link } from "react-router-dom";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -12,7 +12,7 @@ const Header = () => {
   const [session, setSession] = useState(null);
 
   // Check for session on component mount and listen for auth changes
-  useState(() => {
+  useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
     });
@@ -24,40 +24,38 @@ const Header = () => {
     });
 
     return () => subscription.unsubscribe();
-  });
+  }, []);
 
   const handleLogout = async () => {
     const { error } = await supabase.auth.signOut();
     if (error) {
       toast({
+        variant: "destructive",
         title: "Hata",
         description: "Çıkış yapılırken bir hata oluştu.",
-        variant: "destructive",
       });
     } else {
       toast({
         title: "Başarılı",
         description: "Başarıyla çıkış yapıldı.",
       });
-      navigate("/auth");
+      navigate("/");
     }
   };
 
   return (
-    <header className="bg-primary text-primary-foreground shadow-md">
-      <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-16">
-          {/* Logo */}
-          <div className="flex items-center space-x-2">
-            <Building2 className="h-8 w-8" />
-            <span className="text-xl font-bold">ArsaPort</span>
-          </div>
+    <header className="sticky top-0 z-50 w-full border-b bg-black">
+      <div className="container flex h-16 items-center justify-between">
+        {/* Logo */}
+        <Link to="/" className="flex items-center space-x-2">
+          <span className="text-lg font-bold text-primary-foreground">
+            ArsaPort
+          </span>
+        </Link>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-4">
-            <Button variant="ghost" className="text-primary-foreground">
-              İlanlar
-            </Button>
+        {/* Desktop Navigation */}
+        <div className="hidden md:flex justify-between flex-1 px-4">
+          <nav className="flex items-center space-x-6 text-sm font-medium">
             <Button variant="ghost" className="text-primary-foreground">
               Hakkımızda
             </Button>
@@ -98,23 +96,27 @@ const Header = () => {
               </>
             )}
           </div>
+        </div>
 
-          {/* Mobile Menu Button */}
-          <button
-            className="md:hidden p-2"
+        {/* Mobile Menu Button */}
+        <div className="flex md:hidden">
+          <Button
+            variant="ghost"
+            className="text-primary-foreground"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
           >
-            <Menu className="h-6 w-6" />
-          </button>
+            {isMenuOpen ? (
+              <X className="h-6 w-6" />
+            ) : (
+              <Menu className="h-6 w-6" />
+            )}
+          </Button>
         </div>
 
         {/* Mobile Menu */}
         {isMenuOpen && (
-          <div className="md:hidden py-4 animate-fade-in">
-            <nav className="flex flex-col space-y-2">
-              <Button variant="ghost" className="text-primary-foreground w-full justify-start">
-                İlanlar
-              </Button>
+          <div className="absolute top-full left-0 right-0 bg-black border-b md:hidden">
+            <nav className="container flex flex-col space-y-4 p-4">
               <Button variant="ghost" className="text-primary-foreground w-full justify-start">
                 Hakkımızda
               </Button>
