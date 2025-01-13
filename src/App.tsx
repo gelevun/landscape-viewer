@@ -1,62 +1,26 @@
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import Index from "./pages/Index";
-import PropertyDetail from "./pages/PropertyDetail";
-import Auth from "./pages/Auth";
-import { useEffect, useState } from "react";
-import { supabase } from "./integrations/supabase/client";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
+import { Toaster } from "@/components/ui/toaster"
+import Header from "@/components/Header"
+import Index from "@/pages/Index"
+import Auth from "@/pages/Auth"
+import PropertyFormPage from "@/pages/PropertyForm"
 
-const queryClient = new QueryClient();
-
-const App = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
-
-  useEffect(() => {
-    // Check initial auth state
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setIsAuthenticated(!!session);
-    });
-
-    // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      setIsAuthenticated(!!session);
-    });
-
-    return () => subscription.unsubscribe();
-  }, []);
-
-  // Show nothing while checking auth state
-  if (isAuthenticated === null) {
-    return null;
-  }
-
+function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
+    <Router>
+      <div className="min-h-screen bg-background">
+        <Header />
+        <main>
           <Routes>
-            <Route
-              path="/"
-              element={isAuthenticated ? <Index /> : <Navigate to="/auth" />}
-            />
-            <Route
-              path="/property/:id"
-              element={isAuthenticated ? <PropertyDetail /> : <Navigate to="/auth" />}
-            />
-            <Route
-              path="/auth"
-              element={!isAuthenticated ? <Auth /> : <Navigate to="/" />}
-            />
+            <Route path="/" element={<Index />} />
+            <Route path="/auth" element={<Auth />} />
+            <Route path="/properties/new" element={<PropertyFormPage />} />
           </Routes>
-        </BrowserRouter>
-      </TooltipProvider>
-    </QueryClientProvider>
-  );
-};
+        </main>
+        <Toaster />
+      </div>
+    </Router>
+  )
+}
 
-export default App;
+export default App
