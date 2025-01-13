@@ -1,55 +1,67 @@
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { MapPin, Ruler, Building } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { MapPin, Ruler, Home } from "lucide-react";
 import { Link } from "react-router-dom";
 
 interface PropertyCardProps {
+  id: string;
   title: string;
-  location: string;
   price: number;
-  area: number;
+  size: number;
+  address: string;
+  city: string;
   type: string;
-  imageUrl: string;
-  id: number;
+  imageUrl?: string;
 }
 
-const PropertyCard = ({ id, title, location, price, area, type, imageUrl }: PropertyCardProps) => {
+const PropertyCard = ({
+  id,
+  title,
+  price,
+  size,
+  address,
+  city,
+  type,
+  imageUrl,
+}: PropertyCardProps) => {
+  const formatPrice = (price: number) => {
+    return new Intl.NumberFormat("tr-TR", {
+      style: "currency",
+      currency: "TRY",
+      maximumFractionDigits: 0,
+    }).format(price);
+  };
+
   return (
     <Card className="overflow-hidden hover:shadow-lg transition-shadow">
-      <div className="relative aspect-[16/9] overflow-hidden">
-        <img
-          src={imageUrl}
-          alt={title}
-          className="object-cover w-full h-full hover:scale-105 transition-transform duration-300"
-        />
-      </div>
-      <CardHeader className="p-4">
-        <h3 className="font-semibold text-lg line-clamp-2">{title}</h3>
-        <div className="flex items-center text-muted-foreground">
-          <MapPin className="h-4 w-4 mr-1" />
-          <span className="text-sm">{location}</span>
+      <Link to={`/property/${id}`}>
+        <div className="aspect-[16/9] relative">
+          <img
+            src={imageUrl || "/placeholder.svg"}
+            alt={title}
+            className="object-cover w-full h-full"
+          />
+          <Badge className="absolute top-2 right-2">{type}</Badge>
         </div>
-      </CardHeader>
-      <CardContent className="p-4 pt-0 space-y-2">
-        <div className="flex items-center justify-between text-sm">
-          <div className="flex items-center">
+        <CardHeader>
+          <h3 className="text-lg font-semibold line-clamp-1">{title}</h3>
+        </CardHeader>
+        <CardContent className="space-y-2">
+          <div className="flex items-center text-muted-foreground">
+            <MapPin className="h-4 w-4 mr-1" />
+            <span className="text-sm line-clamp-1">
+              {address}, {city}
+            </span>
+          </div>
+          <div className="flex items-center text-muted-foreground">
             <Ruler className="h-4 w-4 mr-1" />
-            <span>{area} m²</span>
+            <span className="text-sm">{size} m²</span>
           </div>
-          <div className="flex items-center">
-            <Building className="h-4 w-4 mr-1" />
-            <span>{type}</span>
-          </div>
-        </div>
-        <div className="text-xl font-bold text-primary">
-          {price.toLocaleString("tr-TR")} ₺
-        </div>
-      </CardContent>
-      <CardFooter className="p-4 pt-0">
-        <Button className="w-full" asChild>
-          <Link to={`/property/${id}`}>Detayları Gör</Link>
-        </Button>
-      </CardFooter>
+        </CardContent>
+        <CardFooter>
+          <p className="text-lg font-bold text-primary">{formatPrice(price)}</p>
+        </CardFooter>
+      </Link>
     </Card>
   );
 };
