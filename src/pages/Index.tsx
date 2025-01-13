@@ -1,29 +1,76 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import PropertyCard from "@/components/PropertyCard";
-import SearchFilters from "@/components/SearchFilters";
+import SearchFilters, { FilterState } from "@/components/SearchFilters";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useSession } from "@supabase/auth-helpers-react";
+import { useState } from "react";
 
 const Index = () => {
   const session = useSession();
+  const [filters, setFilters] = useState<FilterState>({
+    location: "",
+    propertyType: "",
+    priceRange: "",
+    sortBy: "newest",
+    landType: "all",
+    registrationStatus: "all-status",
+  });
+
   const { data: properties, isLoading } = useQuery({
-    queryKey: ["properties"],
+    queryKey: ["properties", filters],
     queryFn: async () => {
-      const { data, error } = await supabase
+      let query = supabase
         .from("properties")
         .select(`*, property_images(url, is_primary)`);
+
+      // Location filter
+      if (filters.location) {
+        query = query.or(`city.ilike.%${filters.location}%,address.ilike.%${filters.location}%`);
+      }
+
+      // Property type filter
+      if (filters.propertyType) {
+        query = query.eq('type', filters.propertyType);
+      }
+
+      // Price range filter
+      if (filters.priceRange) {
+        const [min, max] = filters.priceRange.split('-').map(Number);
+        if (max) {
+          query = query.gte('price', min).lte('price', max);
+        } else {
+          query = query.gte('price', min);
+        }
+      }
+
+      // Sort
+      switch (filters.sortBy) {
+        case 'newest':
+          query = query.order('created_at', { ascending: false });
+          break;
+        case 'price-asc':
+          query = query.order('price', { ascending: true });
+          break;
+        case 'price-desc':
+          query = query.order('price', { ascending: false });
+          break;
+        case 'area-desc':
+          query = query.order('size', { ascending: false });
+          break;
+      }
+
+      const { data, error } = await query;
 
       if (error) throw error;
       return data;
     },
   });
 
-  const handleFilterChange = (filters: any) => {
-    console.log("Filters changed:", filters);
-    // Will implement filter logic later
+  const handleFilterChange = (newFilters: FilterState) => {
+    setFilters(newFilters);
   };
 
   return (
@@ -41,19 +88,28 @@ const Index = () => {
       </div>
 
       <div className="space-y-6">
-        {/* Search Filters */}
         <SearchFilters onFilterChange={handleFilterChange} />
 
-        {/* Properties Grid */}
         {isLoading ? (
-          <div className="flex justify-center items-center min-h-[200px]">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[1, 2, 3].map((n) => (
+              <div 
+                key={n} 
+                className="h-[400px] rounded-lg bg-gray-100 animate-pulse"
+              />
+            ))}
           </div>
         ) : !properties?.length ? (
           <div className="text-center py-12">
-            <h3 className="text-lg font-semibold mb-2">Henüz ilan bulunmuyor</h3>
+            <h3 className="text-lg font-semibold mb-2">
+              {filters.location || filters.propertyType || filters.priceRange 
+                ? "Arama kriterlerinize uygun ilan bulunamadı" 
+                : "Henüz ilan bulunmuyor"}
+            </h3>
             <p className="text-muted-foreground">
-              İlk ilanı oluşturmak için "İlan Ver" butonuna tıklayın
+              {filters.location || filters.propertyType || filters.priceRange 
+                ? "Lütfen farklı filtreler deneyiniz" 
+                : "İlk ilanı oluşturmak için 'İlan Ver' butonuna tıklayın"}
             </p>
           </div>
         ) : (
