@@ -117,14 +117,29 @@ const Auth = () => {
                   email_label: "E-posta",
                   password_label: "Şifre",
                   button_label: "Giriş Yap",
+                  loading_button_label: "Giriş yapılıyor...",
+                  social_provider_text: "{{provider}} ile giriş yap",
+                  link_text: "Zaten hesabınız var mı? Giriş yapın",
                 },
                 sign_up: {
                   email_label: "E-posta",
                   password_label: "Şifre",
                   button_label: "Kayıt Ol",
+                  loading_button_label: "Kayıt olunuyor...",
+                  social_provider_text: "{{provider}} ile kayıt ol",
+                  link_text: "Hesabınız yok mu? Kayıt olun",
+                  confirmation_text: "E-posta adresinize doğrulama bağlantısı gönderildi",
+                },
+                forgotten_password: {
+                  link_text: "Şifrenizi mi unuttunuz?",
+                  button_label: "Şifremi Sıfırla",
+                  loading_button_label: "Şifre sıfırlama bağlantısı gönderiliyor...",
+                  confirmation_text: "Şifre sıfırlama bağlantısı e-posta adresinize gönderildi",
                 },
               },
             }}
+            providers={[]}
+            view="sign_up"
           />
         </div>
       </div>
