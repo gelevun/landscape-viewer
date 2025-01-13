@@ -15,7 +15,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { supabase } from "@/integrations/supabase/client"
-import { useAuth } from "@supabase/auth-helpers-react"
+import { useSession } from "@supabase/auth-helpers-react"
 
 const propertyFormSchema = z.object({
   title: z.string().min(2, {
@@ -51,7 +51,7 @@ interface PropertyFormProps {
 export function PropertyForm({ initialData, propertyId }: PropertyFormProps) {
   const { toast } = useToast()
   const navigate = useNavigate()
-  const auth = useAuth()
+  const session = useSession()
 
   const form = useForm<PropertyFormValues>({
     resolver: zodResolver(propertyFormSchema),
@@ -69,7 +69,7 @@ export function PropertyForm({ initialData, propertyId }: PropertyFormProps) {
   })
 
   async function onSubmit(data: PropertyFormValues) {
-    if (!auth?.user?.id) {
+    if (!session?.user?.id) {
       toast({
         variant: "destructive",
         title: "Lütfen giriş yapın",
@@ -79,12 +79,11 @@ export function PropertyForm({ initialData, propertyId }: PropertyFormProps) {
 
     try {
       if (propertyId) {
-        // Update existing property
         const { error } = await supabase
           .from("properties")
           .update({
             ...data,
-            user_id: auth.user.id,
+            user_id: session.user.id,
           })
           .eq("id", propertyId)
 
@@ -94,13 +93,12 @@ export function PropertyForm({ initialData, propertyId }: PropertyFormProps) {
           title: "Arsa başarıyla güncellendi",
         })
       } else {
-        // Create new property
         const { error } = await supabase
           .from("properties")
-          .insert([{
+          .insert({
             ...data,
-            user_id: auth.user.id,
-          }])
+            user_id: session.user.id,
+          })
 
         if (error) throw error
 
