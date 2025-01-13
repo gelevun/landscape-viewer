@@ -27,7 +27,6 @@ const PropertyMap = ({ latitude, longitude, title }: PropertyMapProps) => {
   return (
     <div className="h-[400px] w-full rounded-lg overflow-hidden">
       <MapContainer
-        key={`${latitude}-${longitude}`}
         center={position}
         zoom={13}
         scrollWheelZoom={false}
