@@ -60,7 +60,10 @@ export function usePropertyForm({ initialData, propertyId }: UsePropertyFormProp
       } else {
         const { error } = await supabase
           .from("properties")
-          .insert(propertyData)
+          .insert({
+            ...propertyData,
+            status: "available",
+          })
 
         if (error) throw error
 
