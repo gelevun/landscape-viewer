@@ -9,107 +9,16 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      profiles: {
-        Row: {
-          created_at: string
-          email: string
-          first_name: string
-          id: string
-          last_name: string
-          updated_at: string
-        }
-        Insert: {
-          created_at?: string
-          email: string
-          first_name?: string
-          id: string
-          last_name?: string
-          updated_at?: string
-        }
-        Update: {
-          created_at?: string
-          email?: string
-          first_name?: string
-          id?: string
-          last_name?: string
-          updated_at?: string
-        }
-        Relationships: []
-      }
-      properties: {
-        Row: {
-          address: string
-          created_at: string | null
-          date: string | null
-          id: string
-          price: number
-          size: number
-          status: string
-          title: string
-          updated_at: string | null
-          user_id: string | null
-        }
-        Insert: {
-          address: string
-          created_at?: string | null
-          date?: string | null
-          id?: string
-          price: number
-          size: number
-          status: string
-          title: string
-          updated_at?: string | null
-          user_id?: string | null
-        }
-        Update: {
-          address?: string
-          created_at?: string | null
-          date?: string | null
-          id?: string
-          price?: number
-          size?: number
-          status?: string
-          title?: string
-          updated_at?: string | null
-          user_id?: string | null
-        }
-        Relationships: []
-      }
-      user_roles: {
-        Row: {
-          created_at: string
-          id: string
-          role: Database["public"]["Enums"]["user_role"] | null
-          user_id: string | null
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          role?: Database["public"]["Enums"]["user_role"] | null
-          user_id?: string | null
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          role?: Database["public"]["Enums"]["user_role"] | null
-          user_id?: string | null
-        }
-        Relationships: []
-      }
+      [_ in never]: never
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      create_initial_admin: {
-        Args: {
-          admin_email: string
-        }
-        Returns: undefined
-      }
+      [_ in never]: never
     }
     Enums: {
-      user_role: "admin" | "user"
+      [_ in never]: never
     }
     CompositeTypes: {
       [_ in never]: never
