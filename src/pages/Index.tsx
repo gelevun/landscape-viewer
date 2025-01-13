@@ -34,7 +34,7 @@ const Index = () => {
           <Link to="/properties/new">
             <Button>
               <Plus className="mr-2 h-4 w-4" />
-              Yeni İlan
+              İlan Ver
             </Button>
           </Link>
         )}
@@ -53,7 +53,7 @@ const Index = () => {
           <div className="text-center py-12">
             <h3 className="text-lg font-semibold mb-2">Henüz ilan bulunmuyor</h3>
             <p className="text-muted-foreground">
-              İlk ilanı oluşturmak için "Yeni İlan" butonuna tıklayın
+              İlk ilanı oluşturmak için "İlan Ver" butonuna tıklayın
             </p>
           </div>
         ) : (
