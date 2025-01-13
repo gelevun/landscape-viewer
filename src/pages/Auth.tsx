@@ -29,7 +29,7 @@ const Auth = () => {
         if (event === "SIGNED_OUT") {
           navigate("/auth");
         }
-        if (event === "USER_UPDATED") {
+        if (event === "USER_UPDATED" || event === "PASSWORD_RECOVERY") {
           const { error } = await supabase.auth.getSession();
           if (error) {
             setErrorMessage(getErrorMessage(error));
@@ -50,6 +50,9 @@ const Auth = () => {
           }
           if (error.message.includes("Password should be at least 6 characters")) {
             return "Şifre en az 6 karakter uzunluğunda olmalıdır.";
+          }
+          if (error.message.includes("Email not confirmed")) {
+            return "Lütfen e-posta adresinizi doğrulayın ve tekrar deneyin.";
           }
           break;
         case 422:
