@@ -1,17 +1,14 @@
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
-import 'leaflet/dist/leaflet.css';
-import { Icon } from 'leaflet';
-import { useToast } from "@/components/ui/use-toast";
+import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import "leaflet/dist/leaflet.css";
+import L from "leaflet";
 
-// Fix for default marker icon
-import icon from 'leaflet/dist/images/marker-icon.png';
-import iconShadow from 'leaflet/dist/images/marker-shadow.png';
-
-const defaultIcon = new Icon({
-  iconUrl: icon,
-  shadowUrl: iconShadow,
+// Fix for default markers
+const icon = L.icon({
+  iconUrl: "/marker-icon.png",
   iconSize: [25, 41],
-  iconAnchor: [12, 41]
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowSize: [41, 41],
 });
 
 interface PropertyMapProps {
@@ -21,33 +18,23 @@ interface PropertyMapProps {
 }
 
 const PropertyMap = ({ latitude, longitude, title }: PropertyMapProps) => {
-  const { toast } = useToast();
-  
-  const position: [number, number] = [latitude, longitude];
-
   return (
-    <MapContainer 
-      center={position} 
-      zoom={15} 
-      style={{ height: '400px', width: '100%', borderRadius: '0.5rem' }}
-    >
-      <TileLayer
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        onError={() => {
-          toast({
-            variant: "destructive",
-            title: "Harita yüklenemedi",
-            description: "Lütfen daha sonra tekrar deneyin.",
-          });
-        }}
-      />
-      <Marker position={position} icon={defaultIcon}>
-        <Popup>
-          {title}
-        </Popup>
-      </Marker>
-    </MapContainer>
+    <div className="h-[400px] w-full rounded-lg overflow-hidden">
+      <MapContainer
+        center={[latitude, longitude]}
+        zoom={13}
+        scrollWheelZoom={false}
+        style={{ height: "100%", width: "100%" }}
+      >
+        <TileLayer
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        />
+        <Marker position={[latitude, longitude]} icon={icon}>
+          <Popup>{title}</Popup>
+        </Marker>
+      </MapContainer>
+    </div>
   );
 };
 
