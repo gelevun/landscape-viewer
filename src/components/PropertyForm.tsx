@@ -15,16 +15,21 @@ import {
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { supabase } from "@/integrations/supabase/client"
+import { useAuth } from "@supabase/auth-helpers-react"
 
 const propertyFormSchema = z.object({
   title: z.string().min(2, {
     message: "Başlık en az 2 karakter olmalıdır.",
   }),
   description: z.string().optional(),
-  price: z.string().transform(Number),
-  size: z.string().transform(Number),
-  bedrooms: z.string().transform(Number).optional(),
-  bathrooms: z.string().transform(Number).optional(),
+  price: z.coerce.number().positive({
+    message: "Fiyat pozitif bir sayı olmalıdır.",
+  }),
+  size: z.coerce.number().positive({
+    message: "Büyüklük pozitif bir sayı olmalıdır.",
+  }),
+  bedrooms: z.coerce.number().optional(),
+  bathrooms: z.coerce.number().optional(),
   address: z.string().min(5, {
     message: "Adres en az 5 karakter olmalıdır.",
   }),
@@ -46,29 +51,41 @@ interface PropertyFormProps {
 export function PropertyForm({ initialData, propertyId }: PropertyFormProps) {
   const { toast } = useToast()
   const navigate = useNavigate()
+  const auth = useAuth()
 
   const form = useForm<PropertyFormValues>({
     resolver: zodResolver(propertyFormSchema),
-    defaultValues: initialData || {
-      title: "",
-      description: "",
-      price: "",
-      size: "",
-      bedrooms: "",
-      bathrooms: "",
-      address: "",
-      city: "",
-      type: "",
+    defaultValues: {
+      title: initialData?.title || "",
+      description: initialData?.description || "",
+      price: initialData?.price || 0,
+      size: initialData?.size || 0,
+      bedrooms: initialData?.bedrooms || 0,
+      bathrooms: initialData?.bathrooms || 0,
+      address: initialData?.address || "",
+      city: initialData?.city || "",
+      type: initialData?.type || "",
     },
   })
 
   async function onSubmit(data: PropertyFormValues) {
+    if (!auth?.user?.id) {
+      toast({
+        variant: "destructive",
+        title: "Lütfen giriş yapın",
+      })
+      return
+    }
+
     try {
       if (propertyId) {
         // Update existing property
         const { error } = await supabase
           .from("properties")
-          .update(data)
+          .update({
+            ...data,
+            user_id: auth.user.id,
+          })
           .eq("id", propertyId)
 
         if (error) throw error
@@ -80,7 +97,10 @@ export function PropertyForm({ initialData, propertyId }: PropertyFormProps) {
         // Create new property
         const { error } = await supabase
           .from("properties")
-          .insert([data])
+          .insert([{
+            ...data,
+            user_id: auth.user.id,
+          }])
 
         if (error) throw error
 
