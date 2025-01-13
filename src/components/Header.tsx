@@ -1,9 +1,9 @@
 import { Button } from "@/components/ui/button";
-import { Building2, LogIn, Menu, UserPlus, LogOut } from "lucide-react";
+import { Building2, LogIn, Menu, UserPlus, LogOut, Plus } from "lucide-react";
 import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -48,6 +48,12 @@ const Header = () => {
             <Button variant="ghost" className="text-primary-foreground">
               İletişim
             </Button>
+            <Link to="/properties/new">
+              <Button variant="secondary">
+                <Plus className="mr-2 h-4 w-4" />
+                İlan Ver
+              </Button>
+            </Link>
           </nav>
 
           {/* Auth Button */}
@@ -83,6 +89,12 @@ const Header = () => {
               <Button variant="ghost" className="text-primary-foreground w-full justify-start">
                 İletişim
               </Button>
+              <Link to="/properties/new">
+                <Button variant="secondary" className="w-full justify-start">
+                  <Plus className="mr-2 h-4 w-4" />
+                  İlan Ver
+                </Button>
+              </Link>
               <Button
                 variant="secondary"
                 className="w-full justify-start"
