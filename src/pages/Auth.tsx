@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import type { AuthError } from "@supabase/supabase-js";
+import type { AuthError, AuthApiError } from "@supabase/supabase-js";
 
 const Auth = () => {
   const navigate = useNavigate();
@@ -29,11 +29,35 @@ const Auth = () => {
         if (event === "SIGNED_OUT") {
           navigate("/auth");
         }
+        if (event === "USER_UPDATED") {
+          const { error } = await supabase.auth.getSession();
+          if (error) {
+            setErrorMessage(getErrorMessage(error));
+          }
+        }
       }
     );
 
     return () => subscription.unsubscribe();
   }, [navigate]);
+
+  const getErrorMessage = (error: AuthError) => {
+    if (error instanceof AuthApiError) {
+      switch (error.code) {
+        case 'invalid_credentials':
+          return 'Geçersiz e-posta veya şifre. Lütfen bilgilerinizi kontrol edip tekrar deneyin.';
+        case 'email_not_confirmed':
+          return 'Lütfen giriş yapmadan önce e-posta adresinizi doğrulayın.';
+        case 'user_not_found':
+          return 'Bu bilgilerle eşleşen kullanıcı bulunamadı.';
+        case 'invalid_grant':
+          return 'Geçersiz giriş bilgileri.';
+        default:
+          return error.message;
+      }
+    }
+    return error.message;
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
@@ -66,7 +90,6 @@ const Auth = () => {
                 },
               },
             }}
-            providers={["google"]}
             localization={{
               variables: {
                 sign_in: {
