@@ -33,13 +33,17 @@ const PropertyMap = ({ latitude, longitude, title }: PropertyMapProps) => {
         scrollWheelZoom={false}
         style={{ height: "100%", width: "100%" }}
       >
-        <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        />
-        <Marker position={position}>
-          <Popup>{title}</Popup>
-        </Marker>
+        {({ map }) => (
+          <>
+            <TileLayer
+              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            />
+            <Marker position={position}>
+              <Popup>{title}</Popup>
+            </Marker>
+          </>
+        )}
       </MapContainer>
     </div>
   );
