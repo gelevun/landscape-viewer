@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { AuthError } from "@supabase/supabase-js";
+import { AuthError, AuthApiError } from "@supabase/supabase-js";
 
 const Auth = () => {
   const navigate = useNavigate();
@@ -42,21 +42,29 @@ const Auth = () => {
   }, [navigate]);
 
   const getErrorMessage = (error: AuthError): string => {
-    if ('code' in error && typeof error.code === 'string') {
+    if (error instanceof AuthApiError) {
+      switch (error.status) {
+        case 400:
+          if (error.message.includes("Invalid login credentials")) {
+            return "Geçersiz e-posta veya şifre. Lütfen bilgilerinizi kontrol edip tekrar deneyin.";
+          }
+          break;
+      }
+      
       switch (error.code) {
-        case 'invalid_credentials':
-          return 'Geçersiz e-posta veya şifre. Lütfen bilgilerinizi kontrol edip tekrar deneyin.';
-        case 'email_not_confirmed':
-          return 'Lütfen giriş yapmadan önce e-posta adresinizi doğrulayın.';
-        case 'user_not_found':
-          return 'Bu bilgilerle eşleşen kullanıcı bulunamadı.';
-        case 'invalid_grant':
-          return 'Geçersiz giriş bilgileri.';
+        case "invalid_credentials":
+          return "Geçersiz e-posta veya şifre. Lütfen bilgilerinizi kontrol edip tekrar deneyin.";
+        case "email_not_confirmed":
+          return "Lütfen giriş yapmadan önce e-posta adresinizi doğrulayın.";
+        case "user_not_found":
+          return "Bu bilgilerle eşleşen kullanıcı bulunamadı.";
+        case "invalid_grant":
+          return "Geçersiz giriş bilgileri.";
         default:
-          return error.message || 'Bir hata oluştu. Lütfen tekrar deneyin.';
+          return error.message || "Bir hata oluştu. Lütfen tekrar deneyin.";
       }
     }
-    return error.message || 'Bir hata oluştu. Lütfen tekrar deneyin.';
+    return error.message || "Bir hata oluştu. Lütfen tekrar deneyin.";
   };
 
   return (
