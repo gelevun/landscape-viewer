@@ -1,11 +1,20 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Search } from "lucide-react";
-import { FilterState } from "@/types/filters";
 import LocationFilter from "./filters/LocationFilter";
 import PropertyTypeFilter from "./filters/PropertyTypeFilter";
 import PriceRangeFilter from "./filters/PriceRangeFilter";
 import SortFilter from "./filters/SortFilter";
 import AdvancedFilters from "./filters/AdvancedFilters";
+
+export interface FilterState {
+  location: string;
+  propertyType: string;
+  priceRange: string;
+  sortBy: string;
+  landType: string;
+  registrationStatus: string;
+}
 
 interface SearchFiltersProps {
   onFilterChange: (filters: FilterState) => void;

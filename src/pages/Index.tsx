@@ -1,6 +1,7 @@
 import Header from "@/components/Header";
 import PropertyCard from "@/components/PropertyCard";
-import SearchFilters, { FilterState } from "@/components/SearchFilters";
+import SearchFilters from "@/components/SearchFilters";
+import type { FilterState } from "@/components/SearchFilters";
 import { useState } from "react";
 import {
   Pagination,
