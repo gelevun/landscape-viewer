@@ -1,80 +1,64 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import PropertyCard from "@/components/PropertyCard";
-import Header from "@/components/Header";
-import { useState } from "react";
-import LocationFilter from "@/components/filters/LocationFilter";
-import PropertyTypeFilter from "@/components/filters/PropertyTypeFilter";
-import PriceRangeFilter from "@/components/filters/PriceRangeFilter";
-import SortFilter from "@/components/filters/SortFilter";
+import SearchFilters from "@/components/SearchFilters";
+import { Button } from "@/components/ui/button";
+import { Plus } from "lucide-react";
+import { Link } from "react-router-dom";
+import { useSession } from "@supabase/auth-helpers-react";
 
 const Index = () => {
-  const [location, setLocation] = useState("");
-  const [propertyType, setPropertyType] = useState("");
-  const [priceRange, setPriceRange] = useState("");
-  const [sortBy, setSortBy] = useState("newest");
-
+  const session = useSession();
   const { data: properties, isLoading } = useQuery({
-    queryKey: ["properties", location, propertyType, priceRange, sortBy],
+    queryKey: ["properties"],
     queryFn: async () => {
-      let query = supabase
+      const { data, error } = await supabase
         .from("properties")
         .select(`*, property_images(url, is_primary)`);
 
-      // Apply filters
-      if (location) {
-        query = query.or(`city.ilike.%${location}%,address.ilike.%${location}%`);
-      }
-
-      if (propertyType) {
-        query = query.eq("type", propertyType);
-      }
-
-      if (priceRange) {
-        const [min, max] = priceRange.split("-");
-        if (min) query = query.gte("price", min);
-        if (max) query = query.lte("price", max);
-      }
-
-      // Apply sorting
-      switch (sortBy) {
-        case "price-asc":
-          query = query.order("price", { ascending: true });
-          break;
-        case "price-desc":
-          query = query.order("price", { ascending: false });
-          break;
-        case "area-desc":
-          query = query.order("size", { ascending: false });
-          break;
-        default:
-          query = query.order("created_at", { ascending: false });
-      }
-
-      const { data, error } = await query;
       if (error) throw error;
       return data;
     },
   });
 
+  const handleFilterChange = (filters: any) => {
+    console.log("Filters changed:", filters);
+    // Will implement filter logic later
+  };
+
   return (
-    <div className="min-h-screen bg-background">
-      <Header />
-      <main className="container mx-auto px-4 py-8">
-        {/* Filters */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-          <LocationFilter value={location} onChange={setLocation} />
-          <PropertyTypeFilter value={propertyType} onChange={setPropertyType} />
-          <PriceRangeFilter value={priceRange} onChange={setPriceRange} />
-          <SortFilter value={sortBy} onChange={setSortBy} />
-        </div>
+    <div className="container mx-auto px-4 py-8">
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-3xl font-bold">Arsalar</h1>
+        {session && (
+          <Link to="/properties/new">
+            <Button>
+              <Plus className="mr-2 h-4 w-4" />
+              Yeni İlan
+            </Button>
+          </Link>
+        )}
+      </div>
+
+      <div className="space-y-6">
+        {/* Search Filters */}
+        <SearchFilters onFilterChange={handleFilterChange} />
 
         {/* Properties Grid */}
         {isLoading ? (
-          <div className="text-center">Yükleniyor...</div>
+          <div className="flex justify-center items-center min-h-[200px]">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+          </div>
+        ) : !properties?.length ? (
+          <div className="text-center py-12">
+            <h3 className="text-lg font-semibold mb-2">Henüz ilan bulunmuyor</h3>
+            <p className="text-muted-foreground">
+              İlk ilanı oluşturmak için "Yeni İlan" butonuna tıklayın
+            </p>
+          </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {properties?.map((property) => (
+            {properties.map((property) => (
               <PropertyCard
                 key={property.id}
                 id={property.id}
@@ -91,7 +75,7 @@ const Index = () => {
             ))}
           </div>
         )}
-      </main>
+      </div>
     </div>
   );
 };
