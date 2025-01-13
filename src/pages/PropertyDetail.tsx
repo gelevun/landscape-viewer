@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { MapPin, Ruler, Building2, Phone, Mail, Heart, Share2 } from "lucide-react";
 import Header from "@/components/Header";
+import PropertyMap from "@/components/PropertyMap";
 import {
   Carousel,
   CarouselContent,
@@ -19,6 +20,10 @@ const mockPropertyDetail = {
   price: 2500000,
   area: 500,
   type: "İmarlı Arsa",
+  coordinates: {
+    latitude: 37.035339,
+    longitude: 27.430290
+  },
   description: "Bodrum'un en güzel koylarından birinde, deniz manzaralı, villa imarlı arsa. Tüm altyapı bağlantıları hazır.",
   features: [
     "Deniz Manzaralı",
@@ -131,6 +136,18 @@ const PropertyDetail = () => {
                     </div>
                   ))}
                 </div>
+              </CardContent>
+            </Card>
+
+            {/* Harita */}
+            <Card>
+              <CardContent className="p-6">
+                <h2 className="text-xl font-semibold mb-4">Konum</h2>
+                <PropertyMap 
+                  latitude={property.coordinates.latitude}
+                  longitude={property.coordinates.longitude}
+                  title={property.title}
+                />
               </CardContent>
             </Card>
           </div>
