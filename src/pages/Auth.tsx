@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { AuthError, ApiError } from "@supabase/supabase-js";
+import { AuthError } from "@supabase/supabase-js";
 
 const Auth = () => {
   const navigate = useNavigate();
@@ -41,7 +41,7 @@ const Auth = () => {
     return () => subscription.unsubscribe();
   }, [navigate]);
 
-  const getErrorMessage = (error: AuthError | ApiError) => {
+  const getErrorMessage = (error: AuthError) => {
     if ('code' in error) {
       switch (error.code) {
         case 'invalid_credentials':
