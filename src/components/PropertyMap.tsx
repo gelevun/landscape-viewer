@@ -1,5 +1,18 @@
-import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import 'leaflet/dist/leaflet.css';
+import { Icon } from 'leaflet';
 import { useToast } from "@/components/ui/use-toast";
+
+// Fix for default marker icon
+import icon from 'leaflet/dist/images/marker-icon.png';
+import iconShadow from 'leaflet/dist/images/marker-shadow.png';
+
+const defaultIcon = new Icon({
+  iconUrl: icon,
+  shadowUrl: iconShadow,
+  iconSize: [25, 41],
+  iconAnchor: [12, 41]
+});
 
 interface PropertyMapProps {
   latitude: number;
@@ -10,16 +23,7 @@ interface PropertyMapProps {
 const PropertyMap = ({ latitude, longitude, title }: PropertyMapProps) => {
   const { toast } = useToast();
   
-  const mapContainerStyle = {
-    width: '100%',
-    height: '400px',
-    borderRadius: '0.5rem'
-  };
-
-  const center = {
-    lat: latitude,
-    lng: longitude
-  };
+  const position: [number, number] = [latitude, longitude];
 
   const handleError = () => {
     toast({
@@ -30,21 +34,22 @@ const PropertyMap = ({ latitude, longitude, title }: PropertyMapProps) => {
   };
 
   return (
-    <LoadScript 
-      googleMapsApiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}
+    <MapContainer 
+      center={position} 
+      zoom={15} 
+      style={{ height: '400px', width: '100%', borderRadius: '0.5rem' }}
       onError={handleError}
     >
-      <GoogleMap
-        mapContainerStyle={mapContainerStyle}
-        center={center}
-        zoom={15}
-      >
-        <Marker
-          position={center}
-          title={title}
-        />
-      </GoogleMap>
-    </LoadScript>
+      <TileLayer
+        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+      />
+      <Marker position={position} icon={defaultIcon}>
+        <Popup>
+          {title}
+        </Popup>
+      </Marker>
+    </MapContainer>
   );
 };
 
