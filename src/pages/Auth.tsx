@@ -48,6 +48,9 @@ const Auth = () => {
           if (error.message.includes("Invalid login credentials")) {
             return "Geçersiz e-posta veya şifre. Lütfen bilgilerinizi kontrol edip tekrar deneyin.";
           }
+          if (error.message.includes("Password should be at least 6 characters")) {
+            return "Şifre en az 6 karakter uzunluğunda olmalıdır.";
+          }
           break;
         case 422:
           if (error.message.includes("Email logins are disabled")) {
