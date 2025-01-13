@@ -1,9 +1,25 @@
 import { Button } from "@/components/ui/button";
-import { Building2, LogIn, Menu, Search, UserPlus } from "lucide-react";
+import { Building2, LogIn, Menu, UserPlus } from "lucide-react";
 import { useState } from "react";
+import { useToast } from "@/components/ui/use-toast";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { toast } = useToast();
+
+  const handleLogin = () => {
+    toast({
+      title: "Giriş yapma özelliği",
+      description: "Bu özellik yakında eklenecektir.",
+    });
+  };
+
+  const handleRegister = () => {
+    toast({
+      title: "Kayıt olma özelliği",
+      description: "Bu özellik yakında eklenecektir.",
+    });
+  };
 
   return (
     <header className="bg-primary text-primary-foreground shadow-md">
@@ -30,11 +46,15 @@ const Header = () => {
 
           {/* Auth Buttons */}
           <div className="hidden md:flex items-center space-x-2">
-            <Button variant="ghost" className="text-primary-foreground">
+            <Button
+              variant="ghost"
+              className="text-primary-foreground"
+              onClick={handleLogin}
+            >
               <LogIn className="mr-2 h-4 w-4" />
               Giriş Yap
             </Button>
-            <Button variant="secondary">
+            <Button variant="secondary" onClick={handleRegister}>
               <UserPlus className="mr-2 h-4 w-4" />
               Kayıt Ol
             </Button>
@@ -62,11 +82,19 @@ const Header = () => {
               <Button variant="ghost" className="text-primary-foreground w-full justify-start">
                 İletişim
               </Button>
-              <Button variant="ghost" className="text-primary-foreground w-full justify-start">
+              <Button
+                variant="ghost"
+                className="text-primary-foreground w-full justify-start"
+                onClick={handleLogin}
+              >
                 <LogIn className="mr-2 h-4 w-4" />
                 Giriş Yap
               </Button>
-              <Button variant="secondary" className="w-full justify-start">
+              <Button
+                variant="secondary"
+                className="w-full justify-start"
+                onClick={handleRegister}
+              >
                 <UserPlus className="mr-2 h-4 w-4" />
                 Kayıt Ol
               </Button>

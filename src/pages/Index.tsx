@@ -6,12 +6,12 @@ import { useState } from "react";
 import {
   Pagination,
   PaginationContent,
-  PaginationEllipsis,
   PaginationItem,
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+import { useToast } from "@/components/ui/use-toast";
 
 const mockProperties = [
   {
@@ -21,7 +21,7 @@ const mockProperties = [
     price: 2500000,
     area: 500,
     type: "İmarlı Arsa",
-    imageUrl: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1489&q=80",
+    imageUrl: "https://images.unsplash.com/photo-1500382017468-9049fed747ef",
   },
   {
     id: 2,
@@ -30,7 +30,7 @@ const mockProperties = [
     price: 1500000,
     area: 1000,
     type: "Tarla",
-    imageUrl: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1489&q=80",
+    imageUrl: "https://images.unsplash.com/photo-1500382017468-9049fed747ef",
   },
   {
     id: 3,
@@ -39,7 +39,7 @@ const mockProperties = [
     price: 3500000,
     area: 750,
     type: "İmarlı Arsa",
-    imageUrl: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1489&q=80",
+    imageUrl: "https://images.unsplash.com/photo-1500382017468-9049fed747ef",
   },
   {
     id: 4,
@@ -48,7 +48,7 @@ const mockProperties = [
     price: 1800000,
     area: 600,
     type: "İmarlı Arsa",
-    imageUrl: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1489&q=80",
+    imageUrl: "https://images.unsplash.com/photo-1500382017468-9049fed747ef",
   },
   {
     id: 5,
@@ -57,7 +57,7 @@ const mockProperties = [
     price: 2200000,
     area: 1500,
     type: "Tarla",
-    imageUrl: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1489&q=80",
+    imageUrl: "https://images.unsplash.com/photo-1500382017468-9049fed747ef",
   },
   {
     id: 6,
@@ -66,7 +66,7 @@ const mockProperties = [
     price: 4500000,
     area: 850,
     type: "Ticari Arsa",
-    imageUrl: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1489&q=80",
+    imageUrl: "https://images.unsplash.com/photo-1500382017468-9049fed747ef",
   },
 ];
 
@@ -75,23 +75,25 @@ const ITEMS_PER_PAGE = 6;
 const Index = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [filteredProperties, setFilteredProperties] = useState(mockProperties);
+  const { toast } = useToast();
 
   const handleFilterChange = (filters: FilterState) => {
+    console.log("Applying filters:", filters);
     let filtered = [...mockProperties];
 
     if (filters.location) {
-      filtered = filtered.filter(property =>
+      filtered = filtered.filter((property) =>
         property.location.toLowerCase().includes(filters.location.toLowerCase())
       );
     }
 
     if (filters.propertyType) {
-      filtered = filtered.filter(property => property.type === filters.propertyType);
+      filtered = filtered.filter((property) => property.type === filters.propertyType);
     }
 
     if (filters.priceRange) {
-      const [min, max] = filters.priceRange.split('-').map(Number);
-      filtered = filtered.filter(property => {
+      const [min, max] = filters.priceRange.split("-").map(Number);
+      filtered = filtered.filter((property) => {
         if (max) {
           return property.price >= min && property.price <= max;
         }
@@ -99,33 +101,59 @@ const Index = () => {
       });
     }
 
+    // Gelişmiş filtreler
+    if (filters.landType !== "all") {
+      filtered = filtered.filter((property) => {
+        // Örnek olarak, arsa tipine göre filtreleme
+        if (filters.landType === "flat") {
+          return property.type.includes("İmarlı");
+        } else if (filters.landType === "sloped") {
+          return property.type.includes("Tarla");
+        }
+        return true;
+      });
+    }
+
+    if (filters.registrationStatus !== "all-status") {
+      // Tapu durumuna göre filtreleme (mock veri olmadığı için şimdilik atlandı)
+      console.log("Tapu durumu filtresi:", filters.registrationStatus);
+    }
+
     switch (filters.sortBy) {
-      case 'price-asc':
+      case "price-asc":
         filtered.sort((a, b) => a.price - b.price);
         break;
-      case 'price-desc':
+      case "price-desc":
         filtered.sort((a, b) => b.price - a.price);
         break;
-      case 'area-desc':
+      case "area-desc":
         filtered.sort((a, b) => b.area - a.area);
         break;
       default:
-        // 'newest' is default, no sorting needed
+        // 'newest' varsayılan sıralama
         break;
     }
 
     setFilteredProperties(filtered);
     setCurrentPage(1);
+
+    toast({
+      title: "Filtreler uygulandı",
+      description: `${filtered.length} ilan bulundu.`,
+    });
   };
 
   const totalPages = Math.ceil(filteredProperties.length / ITEMS_PER_PAGE);
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-  const paginatedProperties = filteredProperties.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+  const paginatedProperties = filteredProperties.slice(
+    startIndex,
+    startIndex + ITEMS_PER_PAGE
+  );
 
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
-      
+
       <div className="bg-primary text-primary-foreground py-16">
         <div className="container mx-auto px-4">
           <h1 className="text-4xl md:text-5xl font-bold mb-4">
@@ -145,7 +173,7 @@ const Index = () => {
             Toplam {filteredProperties.length} ilan bulundu
           </p>
         </div>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {paginatedProperties.map((property) => (
             <PropertyCard key={property.id} {...property} />
@@ -157,12 +185,12 @@ const Index = () => {
             <Pagination>
               <PaginationContent>
                 <PaginationItem>
-                  <PaginationPrevious 
-                    onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-                    className={currentPage === 1 ? 'pointer-events-none opacity-50' : ''}
+                  <PaginationPrevious
+                    onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                    className={currentPage === 1 ? "pointer-events-none opacity-50" : ""}
                   />
                 </PaginationItem>
-                
+
                 {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
                   <PaginationItem key={page}>
                     <PaginationLink
@@ -175,9 +203,9 @@ const Index = () => {
                 ))}
 
                 <PaginationItem>
-                  <PaginationNext 
-                    onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-                    className={currentPage === totalPages ? 'pointer-events-none opacity-50' : ''}
+                  <PaginationNext
+                    onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                    className={currentPage === totalPages ? "pointer-events-none opacity-50" : ""}
                   />
                 </PaginationItem>
               </PaginationContent>
