@@ -9,6 +9,22 @@ const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
+  const [session, setSession] = useState(null);
+
+  // Check for session on component mount and listen for auth changes
+  useState(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+    });
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+    });
+
+    return () => subscription.unsubscribe();
+  });
 
   const handleLogout = async () => {
     const { error } = await supabase.auth.signOut();
@@ -48,23 +64,39 @@ const Header = () => {
             <Button variant="ghost" className="text-primary-foreground">
               İletişim
             </Button>
-            <Link to="/properties/new">
-              <Button variant="secondary">
-                <Plus className="mr-2 h-4 w-4" />
-                İlan Ver
-              </Button>
-            </Link>
+            {session && (
+              <Link to="/properties/new">
+                <Button variant="secondary">
+                  <Plus className="mr-2 h-4 w-4" />
+                  İlan Ver
+                </Button>
+              </Link>
+            )}
           </nav>
 
-          {/* Auth Button */}
+          {/* Auth Buttons */}
           <div className="hidden md:flex items-center space-x-2">
-            <Button
-              variant="secondary"
-              onClick={handleLogout}
-            >
-              <LogOut className="mr-2 h-4 w-4" />
-              Çıkış Yap
-            </Button>
+            {session ? (
+              <Button variant="secondary" onClick={handleLogout}>
+                <LogOut className="mr-2 h-4 w-4" />
+                Çıkış Yap
+              </Button>
+            ) : (
+              <>
+                <Link to="/auth">
+                  <Button variant="secondary">
+                    <LogIn className="mr-2 h-4 w-4" />
+                    Giriş Yap
+                  </Button>
+                </Link>
+                <Link to="/auth">
+                  <Button variant="secondary">
+                    <UserPlus className="mr-2 h-4 w-4" />
+                    Kayıt Ol
+                  </Button>
+                </Link>
+              </>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -89,20 +121,39 @@ const Header = () => {
               <Button variant="ghost" className="text-primary-foreground w-full justify-start">
                 İletişim
               </Button>
-              <Link to="/properties/new">
-                <Button variant="secondary" className="w-full justify-start">
-                  <Plus className="mr-2 h-4 w-4" />
-                  İlan Ver
+              {session && (
+                <Link to="/properties/new">
+                  <Button variant="secondary" className="w-full justify-start">
+                    <Plus className="mr-2 h-4 w-4" />
+                    İlan Ver
+                  </Button>
+                </Link>
+              )}
+              {session ? (
+                <Button
+                  variant="secondary"
+                  className="w-full justify-start"
+                  onClick={handleLogout}
+                >
+                  <LogOut className="mr-2 h-4 w-4" />
+                  Çıkış Yap
                 </Button>
-              </Link>
-              <Button
-                variant="secondary"
-                className="w-full justify-start"
-                onClick={handleLogout}
-              >
-                <LogOut className="mr-2 h-4 w-4" />
-                Çıkış Yap
-              </Button>
+              ) : (
+                <>
+                  <Link to="/auth">
+                    <Button variant="secondary" className="w-full justify-start">
+                      <LogIn className="mr-2 h-4 w-4" />
+                      Giriş Yap
+                    </Button>
+                  </Link>
+                  <Link to="/auth">
+                    <Button variant="secondary" className="w-full justify-start">
+                      <UserPlus className="mr-2 h-4 w-4" />
+                      Kayıt Ol
+                    </Button>
+                  </Link>
+                </>
+              )}
             </nav>
           </div>
         )}
