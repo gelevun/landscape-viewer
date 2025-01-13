@@ -3,12 +3,11 @@ import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 
 // Fix for default markers
-const icon = L.icon({
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: "/marker-icon-2x.png",
   iconUrl: "/marker-icon.png",
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-  popupAnchor: [1, -34],
-  shadowSize: [41, 41],
+  shadowUrl: "/marker-shadow.png",
 });
 
 interface PropertyMapProps {
@@ -18,9 +17,14 @@ interface PropertyMapProps {
 }
 
 const PropertyMap = ({ latitude, longitude, title }: PropertyMapProps) => {
+  if (!latitude || !longitude) {
+    return <div className="h-[400px] w-full rounded-lg bg-gray-100" />;
+  }
+
   return (
     <div className="h-[400px] w-full rounded-lg overflow-hidden">
       <MapContainer
+        key={`${latitude}-${longitude}`}
         center={[latitude, longitude]}
         zoom={13}
         scrollWheelZoom={false}
@@ -30,7 +34,7 @@ const PropertyMap = ({ latitude, longitude, title }: PropertyMapProps) => {
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-        <Marker position={[latitude, longitude]} icon={icon}>
+        <Marker position={[latitude, longitude]}>
           <Popup>{title}</Popup>
         </Marker>
       </MapContainer>
