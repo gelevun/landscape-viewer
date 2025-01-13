@@ -14,10 +14,12 @@ interface PropertyFormProps {
 export function PropertyForm({ initialData, propertyId }: PropertyFormProps) {
   const { form, onSubmit } = usePropertyForm({ initialData, propertyId })
   const [showImageUpload, setShowImageUpload] = useState(false)
+  const [createdPropertyId, setCreatedPropertyId] = useState<string>("")
 
-  const handleFormSubmit = async (data: PropertyFormValues) => {
-    const id = await onSubmit(data)
+  const handleFormSubmit = async (values: PropertyFormValues) => {
+    const id = await onSubmit(values)
     if (id) {
+      setCreatedPropertyId(id)
       setShowImageUpload(true)
     }
   }
@@ -34,7 +36,7 @@ export function PropertyForm({ initialData, propertyId }: PropertyFormProps) {
           <div className="mt-8">
             <h3 className="text-lg font-semibold mb-4">Resimler</h3>
             <PropertyImageUpload
-              propertyId={propertyId || ""}
+              propertyId={propertyId || createdPropertyId}
               onUploadComplete={() => {}}
             />
           </div>

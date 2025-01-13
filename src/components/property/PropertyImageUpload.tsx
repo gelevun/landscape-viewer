@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { useToast } from "@/hooks/use-toast"
 import { supabase } from "@/integrations/supabase/client"
-import { Loader2, Upload360, UploadCloud } from "lucide-react"
+import { Loader2, Upload, UploadCloud } from "lucide-react"
 
 interface PropertyImageUploadProps {
   propertyId: string
@@ -119,7 +119,7 @@ export function PropertyImageUpload({ propertyId, onUploadComplete }: PropertyIm
               {is360Uploading ? (
                 <Loader2 className="w-4 h-4 mr-2 animate-spin" />
               ) : (
-                <Upload360 className="w-4 h-4 mr-2" />
+                <Upload className="w-4 h-4 mr-2" />
               )}
               360° Resim Seç
               <input

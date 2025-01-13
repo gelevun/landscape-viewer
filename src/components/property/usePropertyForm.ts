@@ -1,6 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
-import { useNavigate } from "react-router-dom"
 import { useToast } from "@/hooks/use-toast"
 import { supabase } from "@/integrations/supabase/client"
 import { useSession } from "@supabase/auth-helpers-react"
@@ -13,7 +12,6 @@ interface UsePropertyFormProps {
 
 export function usePropertyForm({ initialData, propertyId }: UsePropertyFormProps) {
   const { toast } = useToast()
-  const navigate = useNavigate()
   const session = useSession()
 
   const form = useForm<PropertyFormValues>({
@@ -31,7 +29,7 @@ export function usePropertyForm({ initialData, propertyId }: UsePropertyFormProp
     },
   })
 
-  async function onSubmit(data: PropertyFormValues) {
+  const onSubmit = async (values: PropertyFormValues) => {
     if (!session?.user?.id) {
       toast({
         variant: "destructive",
@@ -42,7 +40,7 @@ export function usePropertyForm({ initialData, propertyId }: UsePropertyFormProp
 
     try {
       const propertyData = {
-        ...data,
+        ...values,
         user_id: session.user.id,
       }
 
@@ -62,10 +60,10 @@ export function usePropertyForm({ initialData, propertyId }: UsePropertyFormProp
       } else {
         const { data: newProperty, error } = await supabase
           .from("properties")
-          .insert({
+          .insert([{
             ...propertyData,
-            status: "available",
-          })
+            status: "available" as const,
+          }])
           .select()
           .single()
 
@@ -90,6 +88,6 @@ export function usePropertyForm({ initialData, propertyId }: UsePropertyFormProp
 
   return {
     form,
-    onSubmit: form.handleSubmit(onSubmit),
+    onSubmit,
   }
 }
