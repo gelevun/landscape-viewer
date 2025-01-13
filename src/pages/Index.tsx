@@ -79,19 +79,16 @@ const Index = () => {
   const handleFilterChange = (filters: FilterState) => {
     let filtered = [...mockProperties];
 
-    // Location filter
     if (filters.location) {
       filtered = filtered.filter(property =>
         property.location.toLowerCase().includes(filters.location.toLowerCase())
       );
     }
 
-    // Property type filter
     if (filters.propertyType) {
       filtered = filtered.filter(property => property.type === filters.propertyType);
     }
 
-    // Price range filter
     if (filters.priceRange) {
       const [min, max] = filters.priceRange.split('-').map(Number);
       filtered = filtered.filter(property => {
@@ -102,7 +99,6 @@ const Index = () => {
       });
     }
 
-    // Sort
     switch (filters.sortBy) {
       case 'price-asc':
         filtered.sort((a, b) => a.price - b.price);
@@ -114,15 +110,14 @@ const Index = () => {
         filtered.sort((a, b) => b.area - a.area);
         break;
       default:
-        // 'newest' is default, no sorting needed as mock data is already in order
+        // 'newest' is default, no sorting needed
         break;
     }
 
     setFilteredProperties(filtered);
-    setCurrentPage(1); // Reset to first page when filters change
+    setCurrentPage(1);
   };
 
-  // Calculate pagination
   const totalPages = Math.ceil(filteredProperties.length / ITEMS_PER_PAGE);
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
   const paginatedProperties = filteredProperties.slice(startIndex, startIndex + ITEMS_PER_PAGE);
@@ -158,7 +153,7 @@ const Index = () => {
         </div>
 
         {totalPages > 1 && (
-          <div className="mt-8">
+          <div className="mt-8 flex justify-center">
             <Pagination>
               <PaginationContent>
                 <PaginationItem>
