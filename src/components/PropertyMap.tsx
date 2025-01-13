@@ -3,6 +3,7 @@ import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 
 // Fix for default markers
+// @ts-ignore - _getIconUrl is a known property but not typed correctly in @types/leaflet
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: "/marker-icon-2x.png",
@@ -32,17 +33,13 @@ const PropertyMap = ({ latitude, longitude, title }: PropertyMapProps) => {
         scrollWheelZoom={false}
         style={{ height: "100%", width: "100%" }}
       >
-        {({ map }) => (
-          <>
-            <TileLayer
-              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            />
-            <Marker position={position}>
-              <Popup>{title}</Popup>
-            </Marker>
-          </>
-        )}
+        <TileLayer
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        />
+        <Marker position={position}>
+          <Popup>{title}</Popup>
+        </Marker>
       </MapContainer>
     </div>
   );
