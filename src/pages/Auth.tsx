@@ -41,8 +41,8 @@ const Auth = () => {
     return () => subscription.unsubscribe();
   }, [navigate]);
 
-  const getErrorMessage = (error: AuthError) => {
-    if ('code' in error) {
+  const getErrorMessage = (error: AuthError): string => {
+    if ('code' in error && typeof error.code === 'string') {
       switch (error.code) {
         case 'invalid_credentials':
           return 'Geçersiz e-posta veya şifre. Lütfen bilgilerinizi kontrol edip tekrar deneyin.';
@@ -53,10 +53,10 @@ const Auth = () => {
         case 'invalid_grant':
           return 'Geçersiz giriş bilgileri.';
         default:
-          return error.message;
+          return error.message || 'Bir hata oluştu. Lütfen tekrar deneyin.';
       }
     }
-    return error.message;
+    return error.message || 'Bir hata oluştu. Lütfen tekrar deneyin.';
   };
 
   return (
