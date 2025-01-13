@@ -101,10 +101,9 @@ const Index = () => {
       });
     }
 
-    // Gelişmiş filtreler
+    // Advanced filters
     if (filters.landType !== "all") {
       filtered = filtered.filter((property) => {
-        // Örnek olarak, arsa tipine göre filtreleme
         if (filters.landType === "flat") {
           return property.type.includes("İmarlı");
         } else if (filters.landType === "sloped") {
@@ -115,8 +114,7 @@ const Index = () => {
     }
 
     if (filters.registrationStatus !== "all-status") {
-      // Tapu durumuna göre filtreleme (mock veri olmadığı için şimdilik atlandı)
-      console.log("Tapu durumu filtresi:", filters.registrationStatus);
+      console.log("Registration status filter:", filters.registrationStatus);
     }
 
     switch (filters.sortBy) {
@@ -130,7 +128,7 @@ const Index = () => {
         filtered.sort((a, b) => b.area - a.area);
         break;
       default:
-        // 'newest' varsayılan sıralama
+        // 'newest' is default
         break;
     }
 
