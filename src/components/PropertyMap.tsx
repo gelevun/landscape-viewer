@@ -1,6 +1,5 @@
-import React, { useEffect, useRef } from 'react';
-import mapboxgl from 'mapbox-gl';
-import 'mapbox-gl/dist/mapbox-gl.css';
+import React from 'react';
+import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
 
 interface PropertyMapProps {
   latitude: number;
@@ -9,40 +8,30 @@ interface PropertyMapProps {
 }
 
 const PropertyMap = ({ latitude, longitude, title }: PropertyMapProps) => {
-  const mapContainer = useRef<HTMLDivElement>(null);
-  const map = useRef<mapboxgl.Map | null>(null);
+  const mapContainerStyle = {
+    width: '100%',
+    height: '400px',
+    borderRadius: '0.5rem'
+  };
 
-  useEffect(() => {
-    if (!mapContainer.current) return;
-
-    // Note: In a production environment, you should use environment variables for the token
-    mapboxgl.accessToken = 'YOUR_MAPBOX_PUBLIC_TOKEN';
-    
-    map.current = new mapboxgl.Map({
-      container: mapContainer.current,
-      style: 'mapbox://styles/mapbox/streets-v12',
-      center: [longitude, latitude],
-      zoom: 15
-    });
-
-    // Add marker
-    new mapboxgl.Marker()
-      .setLngLat([longitude, latitude])
-      .setPopup(new mapboxgl.Popup().setHTML(`<h3>${title}</h3>`))
-      .addTo(map.current);
-
-    // Add navigation controls
-    map.current.addControl(new mapboxgl.NavigationControl(), 'top-right');
-
-    return () => {
-      map.current?.remove();
-    };
-  }, [latitude, longitude, title]);
+  const center = {
+    lat: latitude,
+    lng: longitude
+  };
 
   return (
-    <div className="w-full h-[400px] rounded-lg overflow-hidden">
-      <div ref={mapContainer} className="w-full h-full" />
-    </div>
+    <LoadScript googleMapsApiKey="YOUR_GOOGLE_MAPS_API_KEY">
+      <GoogleMap
+        mapContainerStyle={mapContainerStyle}
+        center={center}
+        zoom={15}
+      >
+        <Marker
+          position={center}
+          title={title}
+        />
+      </GoogleMap>
+    </LoadScript>
   );
 };
 
