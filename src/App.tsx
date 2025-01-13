@@ -5,6 +5,7 @@ import Index from "@/pages/Index"
 import Auth from "@/pages/Auth"
 import PropertyFormPage from "@/pages/PropertyForm"
 import PropertyDetail from "@/pages/PropertyDetail"
+import Profile from "@/pages/Profile"
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
             <Route path="/auth" element={<Auth />} />
             <Route path="/properties/new" element={<PropertyFormPage />} />
             <Route path="/property/:id" element={<PropertyDetail />} />
+            <Route path="/profile" element={<Profile />} />
           </Routes>
         </main>
         <Toaster />

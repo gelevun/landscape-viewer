@@ -56,6 +56,12 @@ const AuthButtons = ({ session, onLogout, className = "", fullWidth = false }: A
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
+            <DropdownMenuItem asChild>
+              <Link to="/profile" className="w-full">
+                <User className="mr-2 h-4 w-4" />
+                Profil
+              </Link>
+            </DropdownMenuItem>
             <DropdownMenuItem onClick={onLogout}>
               <LogOut className="mr-2 h-4 w-4" />
               Çıkış Yap
@@ -65,19 +71,13 @@ const AuthButtons = ({ session, onLogout, className = "", fullWidth = false }: A
       ) : (
         <>
           <Link to="/auth" className={fullWidth ? "w-full block" : ""}>
-            <Button 
-              variant="secondary"
-              className={fullWidth ? "w-full justify-start mb-2" : ""}
-            >
+            <Button variant="secondary" className={fullWidth ? "w-full justify-start" : ""}>
               <LogIn className="mr-2 h-4 w-4" />
               Giriş Yap
             </Button>
           </Link>
-          <Link to="/auth" className={fullWidth ? "w-full block" : ""}>
-            <Button 
-              variant="secondary"
-              className={fullWidth ? "w-full justify-start" : ""}
-            >
+          <Link to="/auth" className={fullWidth ? "w-full block mt-2" : "ml-2"}>
+            <Button variant="outline" className={fullWidth ? "w-full justify-start" : ""}>
               <UserPlus className="mr-2 h-4 w-4" />
               Kayıt Ol
             </Button>
