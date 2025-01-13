@@ -30,6 +30,33 @@ const mockProperties = [
     type: "İmarlı Arsa",
     imageUrl: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1489&q=80",
   },
+  {
+    id: 4,
+    title: "Denize Yakın Yatırımlık Arsa",
+    location: "Fethiye, Muğla",
+    price: 1800000,
+    area: 600,
+    type: "İmarlı Arsa",
+    imageUrl: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1489&q=80",
+  },
+  {
+    id: 5,
+    title: "Yatırıma Uygun Tarım Arazisi",
+    location: "Alaçatı, İzmir",
+    price: 2200000,
+    area: 1500,
+    type: "Tarla",
+    imageUrl: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1489&q=80",
+  },
+  {
+    id: 6,
+    title: "Merkezi Konumda Ticari İmarlı Arsa",
+    location: "Bodrum, Muğla",
+    price: 4500000,
+    area: 850,
+    type: "Ticari Arsa",
+    imageUrl: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1489&q=80",
+  },
 ];
 
 const Index = () => {
@@ -52,7 +79,13 @@ const Index = () => {
 
       {/* Property Listings */}
       <div className="container mx-auto px-4 py-12">
-        <h2 className="text-2xl font-bold mb-6">Öne Çıkan İlanlar</h2>
+        <div className="flex justify-between items-center mb-8">
+          <h2 className="text-2xl font-bold">Öne Çıkan İlanlar</h2>
+          <p className="text-muted-foreground">
+            Toplam {mockProperties.length} ilan bulundu
+          </p>
+        </div>
+        
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {mockProperties.map((property) => (
             <PropertyCard key={property.id} {...property} />
