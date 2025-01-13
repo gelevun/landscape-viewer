@@ -25,24 +25,22 @@ const PropertyMap = ({ latitude, longitude, title }: PropertyMapProps) => {
   
   const position: [number, number] = [latitude, longitude];
 
-  const handleError = () => {
-    toast({
-      variant: "destructive",
-      title: "Harita yüklenemedi",
-      description: "Lütfen daha sonra tekrar deneyin.",
-    });
-  };
-
   return (
     <MapContainer 
       center={position} 
       zoom={15} 
       style={{ height: '400px', width: '100%', borderRadius: '0.5rem' }}
-      onError={handleError}
     >
       <TileLayer
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        onError={() => {
+          toast({
+            variant: "destructive",
+            title: "Harita yüklenemedi",
+            description: "Lütfen daha sonra tekrar deneyin.",
+          });
+        }}
       />
       <Marker position={position} icon={defaultIcon}>
         <Popup>
