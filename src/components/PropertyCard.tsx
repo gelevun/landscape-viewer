@@ -1,6 +1,6 @@
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { MapPin, Ruler, Home } from "lucide-react";
+import { MapPin, Ruler } from "lucide-react";
 import { Link } from "react-router-dom";
 
 interface PropertyCardProps {
