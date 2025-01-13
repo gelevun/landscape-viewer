@@ -1,5 +1,4 @@
 import { Input } from "@/components/ui/input";
-import { MapPin } from "lucide-react";
 
 interface LocationFilterProps {
   value: string;
@@ -8,15 +7,17 @@ interface LocationFilterProps {
 
 const LocationFilter = ({ value, onChange }: LocationFilterProps) => {
   return (
-    <div className="relative">
+    <div className="space-y-2">
+      <label htmlFor="location" className="text-sm font-medium">
+        Konum
+      </label>
       <Input
+        id="location"
         type="text"
-        placeholder="Konum ara..."
-        className="pl-10"
+        placeholder="Şehir veya ilçe ara..."
         value={value}
         onChange={(e) => onChange(e.target.value)}
       />
-      <MapPin className="absolute left-3 top-2.5 h-5 w-5 text-muted-foreground" />
     </div>
   );
 };

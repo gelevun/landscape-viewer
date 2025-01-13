@@ -1,5 +1,5 @@
-import React from 'react';
 import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
+import { useToast } from "@/components/ui/use-toast";
 
 interface PropertyMapProps {
   latitude: number;
@@ -8,6 +8,8 @@ interface PropertyMapProps {
 }
 
 const PropertyMap = ({ latitude, longitude, title }: PropertyMapProps) => {
+  const { toast } = useToast();
+  
   const mapContainerStyle = {
     width: '100%',
     height: '400px',
@@ -19,8 +21,19 @@ const PropertyMap = ({ latitude, longitude, title }: PropertyMapProps) => {
     lng: longitude
   };
 
+  const handleError = () => {
+    toast({
+      variant: "destructive",
+      title: "Harita yüklenemedi",
+      description: "Lütfen daha sonra tekrar deneyin.",
+    });
+  };
+
   return (
-    <LoadScript googleMapsApiKey="YOUR_GOOGLE_MAPS_API_KEY">
+    <LoadScript 
+      googleMapsApiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}
+      onError={handleError}
+    >
       <GoogleMap
         mapContainerStyle={mapContainerStyle}
         center={center}

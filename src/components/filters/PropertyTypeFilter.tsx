@@ -1,4 +1,3 @@
-import { Building2 } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -14,17 +13,21 @@ interface PropertyTypeFilterProps {
 
 const PropertyTypeFilter = ({ value, onChange }: PropertyTypeFilterProps) => {
   return (
-    <Select value={value} onValueChange={onChange}>
-      <SelectTrigger>
-        <Building2 className="mr-2 h-4 w-4" />
-        <SelectValue placeholder="İmar Durumu" />
-      </SelectTrigger>
-      <SelectContent>
-        <SelectItem value="imarlı">İmarlı</SelectItem>
-        <SelectItem value="imarsız">İmarsız</SelectItem>
-        <SelectItem value="hisseli">Hisseli</SelectItem>
-      </SelectContent>
-    </Select>
+    <div className="space-y-2">
+      <label className="text-sm font-medium">Arsa Tipi</label>
+      <Select value={value} onValueChange={onChange}>
+        <SelectTrigger>
+          <SelectValue placeholder="Arsa tipi seçin" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="imarlı">İmarlı Arsa</SelectItem>
+          <SelectItem value="imarsız">İmarsız Arsa</SelectItem>
+          <SelectItem value="tarla">Tarla</SelectItem>
+          <SelectItem value="bağ">Bağ</SelectItem>
+          <SelectItem value="zeytinlik">Zeytinlik</SelectItem>
+        </SelectContent>
+      </Select>
+    </div>
   );
 };
 
