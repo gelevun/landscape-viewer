@@ -1,6 +1,7 @@
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { MapPin, Ruler, Building } from "lucide-react";
+import { Link } from "react-router-dom";
 
 interface PropertyCardProps {
   title: string;
@@ -9,9 +10,10 @@ interface PropertyCardProps {
   area: number;
   type: string;
   imageUrl: string;
+  id: number;
 }
 
-const PropertyCard = ({ title, location, price, area, type, imageUrl }: PropertyCardProps) => {
+const PropertyCard = ({ id, title, location, price, area, type, imageUrl }: PropertyCardProps) => {
   return (
     <Card className="overflow-hidden hover:shadow-lg transition-shadow">
       <div className="relative aspect-[16/9] overflow-hidden">
@@ -44,7 +46,9 @@ const PropertyCard = ({ title, location, price, area, type, imageUrl }: Property
         </div>
       </CardContent>
       <CardFooter className="p-4 pt-0">
-        <Button className="w-full">Detayları Gör</Button>
+        <Button className="w-full" asChild>
+          <Link to={`/property/${id}`}>Detayları Gör</Link>
+        </Button>
       </CardFooter>
     </Card>
   );
