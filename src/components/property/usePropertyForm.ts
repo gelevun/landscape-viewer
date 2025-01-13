@@ -37,7 +37,7 @@ export function usePropertyForm({ initialData, propertyId }: UsePropertyFormProp
         variant: "destructive",
         title: "Lütfen giriş yapın",
       })
-      return
+      return null
     }
 
     try {
@@ -57,22 +57,26 @@ export function usePropertyForm({ initialData, propertyId }: UsePropertyFormProp
         toast({
           title: "Arsa başarıyla güncellendi",
         })
+        
+        return propertyId
       } else {
-        const { error } = await supabase
+        const { data: newProperty, error } = await supabase
           .from("properties")
           .insert({
             ...propertyData,
             status: "available",
           })
+          .select()
+          .single()
 
         if (error) throw error
 
         toast({
           title: "Arsa başarıyla oluşturuldu",
         })
-      }
 
-      navigate("/")
+        return newProperty.id
+      }
     } catch (error) {
       console.error("Error:", error)
       toast({
@@ -80,6 +84,7 @@ export function usePropertyForm({ initialData, propertyId }: UsePropertyFormProp
         title: "Bir hata oluştu",
         description: "Lütfen tekrar deneyin.",
       })
+      return null
     }
   }
 

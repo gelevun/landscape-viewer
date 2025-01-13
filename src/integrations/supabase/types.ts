@@ -98,6 +98,7 @@ export type Database = {
           created_at: string
           id: string
           is_primary: boolean | null
+          is_360: boolean | null
           property_id: string
           url: string
         }
@@ -105,6 +106,7 @@ export type Database = {
           created_at?: string
           id?: string
           is_primary?: boolean | null
+          is_360?: boolean | null
           property_id: string
           url: string
         }
@@ -112,6 +114,7 @@ export type Database = {
           created_at?: string
           id?: string
           is_primary?: boolean | null
+          is_360?: boolean | null
           property_id?: string
           url?: string
         }
@@ -122,9 +125,10 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "properties"
             referencedColumns: ["id"]
-          },
+          }
         ]
       }
+      // ... keep existing code for other tables
     }
     Views: {
       [_ in never]: never
