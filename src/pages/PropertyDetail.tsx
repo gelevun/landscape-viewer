@@ -3,6 +3,13 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { MapPin, Ruler, Building2, Phone, Mail, Heart, Share2 } from "lucide-react";
 import Header from "@/components/Header";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
 
 // Geçici mock veri
 const mockPropertyDetail = {
@@ -34,8 +41,6 @@ const mockPropertyDetail = {
 
 const PropertyDetail = () => {
   const { id } = useParams();
-
-  // Gerçek uygulamada bu veri API'den gelecek
   const property = mockPropertyDetail;
 
   return (
@@ -63,16 +68,24 @@ const PropertyDetail = () => {
         </div>
 
         {/* Fotoğraf Galerisi */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
-          {property.images.map((image, index) => (
-            <div key={index} className="aspect-[4/3] overflow-hidden rounded-lg">
-              <img
-                src={image}
-                alt={`${property.title} - Fotoğraf ${index + 1}`}
-                className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-              />
-            </div>
-          ))}
+        <div className="mb-8">
+          <Carousel className="w-full max-w-5xl mx-auto">
+            <CarouselContent>
+              {property.images.map((image, index) => (
+                <CarouselItem key={index}>
+                  <div className="aspect-[16/9] relative overflow-hidden rounded-lg">
+                    <img
+                      src={image}
+                      alt={`${property.title} - Fotoğraf ${index + 1}`}
+                      className="absolute inset-0 w-full h-full object-cover"
+                    />
+                  </div>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            <CarouselPrevious className="left-4" />
+            <CarouselNext className="right-4" />
+          </Carousel>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
