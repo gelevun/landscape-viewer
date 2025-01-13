@@ -78,13 +78,15 @@ export function PropertyForm({ initialData, propertyId }: PropertyFormProps) {
     }
 
     try {
+      const propertyData = {
+        ...data,
+        user_id: session.user.id,
+      }
+
       if (propertyId) {
         const { error } = await supabase
           .from("properties")
-          .update({
-            ...data,
-            user_id: session.user.id,
-          })
+          .update(propertyData)
           .eq("id", propertyId)
 
         if (error) throw error
@@ -95,10 +97,7 @@ export function PropertyForm({ initialData, propertyId }: PropertyFormProps) {
       } else {
         const { error } = await supabase
           .from("properties")
-          .insert({
-            ...data,
-            user_id: session.user.id,
-          })
+          .insert(propertyData)
 
         if (error) throw error
 
