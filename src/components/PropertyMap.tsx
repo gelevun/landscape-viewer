@@ -22,11 +22,13 @@ const PropertyMap = ({ latitude, longitude, title }: PropertyMapProps) => {
     return <div className="h-[400px] w-full rounded-lg bg-gray-100" />;
   }
 
+  const position: [number, number] = [latitude, longitude];
+
   return (
     <div className="h-[400px] w-full rounded-lg overflow-hidden">
       <MapContainer
         key={`${latitude}-${longitude}`}
-        center={[latitude, longitude]}
+        center={position}
         zoom={13}
         scrollWheelZoom={false}
         style={{ height: "100%", width: "100%" }}
@@ -35,7 +37,7 @@ const PropertyMap = ({ latitude, longitude, title }: PropertyMapProps) => {
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-        <Marker position={[latitude, longitude]}>
+        <Marker position={position}>
           <Popup>{title}</Popup>
         </Marker>
       </MapContainer>
