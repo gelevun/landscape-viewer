@@ -49,6 +49,11 @@ const Auth = () => {
             return "Geçersiz e-posta veya şifre. Lütfen bilgilerinizi kontrol edip tekrar deneyin.";
           }
           break;
+        case 422:
+          if (error.message.includes("Email logins are disabled")) {
+            return "E-posta ile giriş şu anda devre dışı. Lütfen sistem yöneticisi ile iletişime geçin.";
+          }
+          break;
       }
       
       switch (error.code) {
@@ -60,6 +65,8 @@ const Auth = () => {
           return "Bu bilgilerle eşleşen kullanıcı bulunamadı.";
         case "invalid_grant":
           return "Geçersiz giriş bilgileri.";
+        case "email_provider_disabled":
+          return "E-posta ile giriş şu anda devre dışı. Lütfen sistem yöneticisi ile iletişime geçin.";
         default:
           return error.message || "Bir hata oluştu. Lütfen tekrar deneyin.";
       }
