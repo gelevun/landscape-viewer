@@ -39,9 +39,19 @@ export function usePropertyForm({ initialData, propertyId }: UsePropertyFormProp
     }
 
     try {
+      // Ensure all required fields are present
       const propertyData = {
-        ...values,
+        title: values.title,
+        description: values.description,
+        price: values.price,
+        size: values.size,
+        bedrooms: values.bedrooms,
+        bathrooms: values.bathrooms,
+        address: values.address,
+        city: values.city,
+        type: values.type,
         user_id: session.user.id,
+        status: "available" as const,
       }
 
       if (propertyId) {
@@ -60,10 +70,7 @@ export function usePropertyForm({ initialData, propertyId }: UsePropertyFormProp
       } else {
         const { data: newProperty, error } = await supabase
           .from("properties")
-          .insert([{
-            ...propertyData,
-            status: "available" as const,
-          }])
+          .insert(propertyData)
           .select()
           .single()
 
