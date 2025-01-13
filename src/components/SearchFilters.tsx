@@ -17,26 +17,53 @@ import { useState } from "react";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 
-const SearchFilters = () => {
-  const [priceRange, setPriceRange] = useState("");
-  const [propertyType, setPropertyType] = useState("");
-  const [sortBy, setSortBy] = useState("newest");
+export interface FilterState {
+  location: string;
+  propertyType: string;
+  priceRange: string;
+  sortBy: string;
+  landType: string;
+  registrationStatus: string;
+}
+
+interface SearchFiltersProps {
+  onFilterChange: (filters: FilterState) => void;
+}
+
+const SearchFilters = ({ onFilterChange }: SearchFiltersProps) => {
+  const [filters, setFilters] = useState<FilterState>({
+    location: "",
+    propertyType: "",
+    priceRange: "",
+    sortBy: "newest",
+    landType: "all",
+    registrationStatus: "all-status"
+  });
+
+  const handleFilterChange = (key: keyof FilterState, value: string) => {
+    const newFilters = { ...filters, [key]: value };
+    setFilters(newFilters);
+    onFilterChange(newFilters);
+  };
 
   return (
     <div className="bg-white p-4 rounded-lg shadow-md space-y-4">
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        {/* Konum Arama */}
         <div className="relative">
           <Input
             type="text"
             placeholder="Konum ara..."
             className="pl-10"
+            value={filters.location}
+            onChange={(e) => handleFilterChange('location', e.target.value)}
           />
           <MapPin className="absolute left-3 top-2.5 h-5 w-5 text-muted-foreground" />
         </div>
 
-        {/* İmar Durumu */}
-        <Select value={propertyType} onValueChange={setPropertyType}>
+        <Select 
+          value={filters.propertyType} 
+          onValueChange={(value) => handleFilterChange('propertyType', value)}
+        >
           <SelectTrigger>
             <Building2 className="mr-2 h-4 w-4" />
             <SelectValue placeholder="İmar Durumu" />
@@ -48,8 +75,10 @@ const SearchFilters = () => {
           </SelectContent>
         </Select>
 
-        {/* Fiyat Aralığı */}
-        <Select value={priceRange} onValueChange={setPriceRange}>
+        <Select 
+          value={filters.priceRange} 
+          onValueChange={(value) => handleFilterChange('priceRange', value)}
+        >
           <SelectTrigger>
             <SelectValue placeholder="Fiyat Aralığı" />
           </SelectTrigger>
@@ -61,8 +90,10 @@ const SearchFilters = () => {
           </SelectContent>
         </Select>
 
-        {/* Sıralama */}
-        <Select value={sortBy} onValueChange={setSortBy}>
+        <Select 
+          value={filters.sortBy} 
+          onValueChange={(value) => handleFilterChange('sortBy', value)}
+        >
           <SelectTrigger>
             <ArrowUpDown className="mr-2 h-4 w-4" />
             <SelectValue placeholder="Sıralama" />
@@ -76,7 +107,6 @@ const SearchFilters = () => {
         </Select>
       </div>
 
-      {/* Gelişmiş Filtreler */}
       <div className="flex justify-between items-center">
         <Popover>
           <PopoverTrigger asChild>
@@ -89,7 +119,10 @@ const SearchFilters = () => {
             <div className="space-y-4">
               <div className="space-y-2">
                 <h4 className="font-medium">Arsa Tipi</h4>
-                <RadioGroup defaultValue="all">
+                <RadioGroup 
+                  value={filters.landType}
+                  onValueChange={(value) => handleFilterChange('landType', value)}
+                >
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem value="all" id="all" />
                     <Label htmlFor="all">Tümü</Label>
@@ -107,7 +140,10 @@ const SearchFilters = () => {
               
               <div className="space-y-2">
                 <h4 className="font-medium">Ada/Parsel Durumu</h4>
-                <RadioGroup defaultValue="all-status">
+                <RadioGroup 
+                  value={filters.registrationStatus}
+                  onValueChange={(value) => handleFilterChange('registrationStatus', value)}
+                >
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem value="all-status" id="all-status" />
                     <Label htmlFor="all-status">Tümü</Label>

@@ -1,6 +1,16 @@
 import Header from "@/components/Header";
 import PropertyCard from "@/components/PropertyCard";
-import SearchFilters from "@/components/SearchFilters";
+import SearchFilters, { FilterState } from "@/components/SearchFilters";
+import { useState } from "react";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 
 const mockProperties = [
   {
@@ -59,12 +69,67 @@ const mockProperties = [
   },
 ];
 
+const ITEMS_PER_PAGE = 6;
+
 const Index = () => {
+  const [currentPage, setCurrentPage] = useState(1);
+  const [filteredProperties, setFilteredProperties] = useState(mockProperties);
+
+  const handleFilterChange = (filters: FilterState) => {
+    let filtered = [...mockProperties];
+
+    // Location filter
+    if (filters.location) {
+      filtered = filtered.filter(property =>
+        property.location.toLowerCase().includes(filters.location.toLowerCase())
+      );
+    }
+
+    // Property type filter
+    if (filters.propertyType) {
+      filtered = filtered.filter(property => property.type === filters.propertyType);
+    }
+
+    // Price range filter
+    if (filters.priceRange) {
+      const [min, max] = filters.priceRange.split('-').map(Number);
+      filtered = filtered.filter(property => {
+        if (max) {
+          return property.price >= min && property.price <= max;
+        }
+        return property.price >= min;
+      });
+    }
+
+    // Sort
+    switch (filters.sortBy) {
+      case 'price-asc':
+        filtered.sort((a, b) => a.price - b.price);
+        break;
+      case 'price-desc':
+        filtered.sort((a, b) => b.price - a.price);
+        break;
+      case 'area-desc':
+        filtered.sort((a, b) => b.area - a.area);
+        break;
+      default:
+        // 'newest' is default, no sorting needed as mock data is already in order
+        break;
+    }
+
+    setFilteredProperties(filtered);
+    setCurrentPage(1); // Reset to first page when filters change
+  };
+
+  // Calculate pagination
+  const totalPages = Math.ceil(filteredProperties.length / ITEMS_PER_PAGE);
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const paginatedProperties = filteredProperties.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
       
-      {/* Hero Section */}
       <div className="bg-primary text-primary-foreground py-16">
         <div className="container mx-auto px-4">
           <h1 className="text-4xl md:text-5xl font-bold mb-4">
@@ -73,24 +138,56 @@ const Index = () => {
           <p className="text-lg md:text-xl mb-8 opacity-90">
             Türkiye'nin en kapsamlı arsa ve arazi ilan platformu
           </p>
-          <SearchFilters />
+          <SearchFilters onFilterChange={handleFilterChange} />
         </div>
       </div>
 
-      {/* Property Listings */}
       <div className="container mx-auto px-4 py-12">
         <div className="flex justify-between items-center mb-8">
           <h2 className="text-2xl font-bold">Öne Çıkan İlanlar</h2>
           <p className="text-muted-foreground">
-            Toplam {mockProperties.length} ilan bulundu
+            Toplam {filteredProperties.length} ilan bulundu
           </p>
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {mockProperties.map((property) => (
+          {paginatedProperties.map((property) => (
             <PropertyCard key={property.id} {...property} />
           ))}
         </div>
+
+        {totalPages > 1 && (
+          <div className="mt-8">
+            <Pagination>
+              <PaginationContent>
+                <PaginationItem>
+                  <PaginationPrevious 
+                    onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                    className={currentPage === 1 ? 'pointer-events-none opacity-50' : ''}
+                  />
+                </PaginationItem>
+                
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                  <PaginationItem key={page}>
+                    <PaginationLink
+                      onClick={() => setCurrentPage(page)}
+                      isActive={currentPage === page}
+                    >
+                      {page}
+                    </PaginationLink>
+                  </PaginationItem>
+                ))}
+
+                <PaginationItem>
+                  <PaginationNext 
+                    onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                    className={currentPage === totalPages ? 'pointer-events-none opacity-50' : ''}
+                  />
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
+          </div>
+        )}
       </div>
     </div>
   );
