@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import type { AuthError, AuthApiError } from "@supabase/supabase-js";
+import { AuthError, ApiError } from "@supabase/supabase-js";
 
 const Auth = () => {
   const navigate = useNavigate();
@@ -41,8 +41,8 @@ const Auth = () => {
     return () => subscription.unsubscribe();
   }, [navigate]);
 
-  const getErrorMessage = (error: AuthError) => {
-    if (error instanceof AuthApiError) {
+  const getErrorMessage = (error: AuthError | ApiError) => {
+    if ('code' in error) {
       switch (error.code) {
         case 'invalid_credentials':
           return 'Geçersiz e-posta veya şifre. Lütfen bilgilerinizi kontrol edip tekrar deneyin.';
