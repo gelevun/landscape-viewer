@@ -12,7 +12,7 @@ function App() {
     <Router>
       <div className="min-h-screen bg-background">
         <Header />
-        <main>
+        <main className="container mx-auto px-4">
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/auth" element={<Auth />} />
